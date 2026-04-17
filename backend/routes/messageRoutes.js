@@ -15,7 +15,7 @@ messageRouter.post("/", protect, async (req, res) => {
     });
     const populatedMessage = await Message.findById(message._id).populate(
       "sender",
-      "username email"
+      "username email",
     );
     res.json(populatedMessage);
   } catch (error) {
@@ -32,6 +32,28 @@ messageRouter.get("/:groupId", protect, async (req, res) => {
     res.json(messages);
   } catch (error) {
     res.status(400).json({ message: error.Message });
+  }
+});
+// delete a message
+messageRouter.delete("/:messageId", protect, async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.messageId);
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    // Verify the user trying to delete is the one who sent it
+    if (message.sender.toString() !== req.user._id.toString()) {
+      return res
+        .status(401)
+        .json({ message: "Not authorized to delete this message" });
+    }
+
+    await Message.findByIdAndDelete(req.params.messageId);
+    res.json({ message: "Message deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 module.exports = messageRouter;

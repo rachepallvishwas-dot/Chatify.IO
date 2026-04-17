@@ -53,7 +53,13 @@ const socketIo = (io) => {
       socket.to(message.groupId).emit("message received", message);
     });
     //!END:New Message Handler
-
+    //!START: Delete Message Handler
+    socket.on("delete message", ({ messageId, groupId }) => {
+      console.log("SERVER heard delete request for message:", messageId);
+      // This sends the delete command to everyone else in the same room
+      socket.to(groupId).emit("message deleted", messageId);
+    });
+    //!END: Delete Message Handler
     //!START: Disconnect Handler
     //Triggered when user closes the connection
     socket.on("disconnect", () => {

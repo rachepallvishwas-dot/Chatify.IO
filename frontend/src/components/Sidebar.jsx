@@ -66,6 +66,7 @@ const Sidebar = ({ setSelectedGroup }) => {
         })
         .map((group) => group?._id);
       setUserGroups(userGroupIds);
+      return data;
     } catch (error) {
       console.log(error);
     }
@@ -115,64 +116,52 @@ const Sidebar = ({ setSelectedGroup }) => {
   //join group
   const handleJoinGroup = async (groupId) => {
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || {});
+      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
       const token = userInfo.token;
+
       await axios.post(
         `${apiURL}/api/groups/${groupId}/join`,
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
-      await fetchGroups();
-      setSelectedGroup(groups.find((g) => g?._id === groupId));
-      toast({
-        title: "Joined group successfully",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+
+      const freshGroups = await fetchGroups();
+
+      const newlyJoinedGroup = freshGroups.find((g) => g?._id === groupId);
+      setSelectedGroup(newlyJoinedGroup);
+
+      toast({ title: "Joined group successfully", status: "success" });
     } catch (error) {
-      console.log(error);
-      toast({
-        title: "Error Joining Group",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        description: error?.response?.data?.message || "An error occurred",
-      });
+      console.log("Join Error:", error);
     }
   };
   //leave group
   const handleLeaveGroup = async (groupId) => {
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || {});
+      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
       const token = userInfo.token;
+
       await axios.post(
         `${apiURL}/api/groups/${groupId}/leave`,
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
+
+      setUserGroups((prev) => prev.filter((id) => id !== groupId));
+
+      setSelectedGroup((prev) => (prev?._id === groupId ? null : prev));
+
       await fetchGroups();
-      setSelectedGroup(null);
-      toast({
-        title: "Left group successfully",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+
+      toast({ title: "Left group successfully", status: "success" });
     } catch (error) {
       toast({
-        title: "Error Joining Group",
+        title: "Error Leaving Group",
         status: "error",
-        duration: 3000,
-        isClosable: true,
         description: error?.response?.data?.message || "An error occurred",
       });
     }
@@ -264,24 +253,22 @@ const Sidebar = ({ setSelectedGroup }) => {
                   }
                   variant={userGroups?.includes(group?._id) ? "ghost" : "solid"}
                   ml={3}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
+
                     userGroups?.includes(group?._id)
                       ? handleLeaveGroup(group?._id)
                       : handleJoinGroup(group?._id);
                   }}
                   _hover={{
-                    transform: group.isJoined ? "scale(1.05)" : "none",
-                    bg: group.isJoined ? "red.50" : "blue.600",
+                    transform: userGroups.includes(group?._id)
+                      ? "scale(1.05)"
+                      : "none",
+                    bg: userGroups.includes(group?._id) ? "red.50" : "blue.600",
                   }}
                   transition="all 0.2s"
                 >
-                  {userGroups.includes(group?._id) ? (
-                    <Text fontSize="sm" fontWeight="medium">
-                      Leave
-                    </Text>
-                  ) : (
-                    "Join"
-                  )}
+                  {userGroups.includes(group?._id) ? "Leave" : "Join"}
                 </Button>
               </Flex>
             </Box>

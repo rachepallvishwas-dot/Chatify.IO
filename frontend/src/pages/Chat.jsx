@@ -12,17 +12,27 @@ const Chat = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || {});
+    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
     const newSocket = io(ENDPOINT, {
       auth: { user: userInfo },
     });
     setSocket(newSocket);
+
+    const savedGroup = localStorage.getItem("selectedGroup");
+    if (savedGroup) {
+      setSelectedGroup(JSON.parse(savedGroup));
+    }
+
     return () => {
-      if (newSocket) {
-        newSocket.disconnect();
-      }
+      if (newSocket) newSocket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (selectedGroup) {
+      localStorage.setItem("selectedGroup", JSON.stringify(selectedGroup));
+    }
+  }, [selectedGroup]);
   return (
     <Flex h="100vh" direction={{ base: "column", md: "row" }}>
       <Box
@@ -32,7 +42,7 @@ const Chat = () => {
         borderColor="gray.200"
         display={{ base: selectedGroup ? "none" : "block", md: "block" }}
       >
-        <Sidebar setSelectedGroup={setSelectedGroup} />
+        <Sidebar setSelectedGroup={setSelectedGroup} socket={socket} />
       </Box>
       <Box
         flex="1"
@@ -40,6 +50,7 @@ const Chat = () => {
       >
         {socket && (
           <ChatArea
+            key={selectedGroup?._id}
             selectedGroup={selectedGroup}
             socket={socket}
             setSelectedGroup={setSelectedGroup}

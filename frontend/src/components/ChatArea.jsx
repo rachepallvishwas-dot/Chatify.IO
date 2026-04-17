@@ -19,12 +19,12 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { FiSend, FiInfo, FiMessageCircle } from "react-icons/fi";
 import UsersList from "./UsersList";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import apiURL from "../../utils";
+import { FiSend, FiInfo, FiMessageCircle, FiTrash2 } from "react-icons/fi";
 
 const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
   console.log(selectedGroup?._id);
@@ -69,6 +69,11 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
         );
       });
 
+      socket.on("message deleted", (messageId) => {
+        console.log("RECEIVER heard the delete signal for:", messageId);
+        setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
+      });
+
       socket.on("notification", (notification) => {
         toast({
           title:
@@ -96,6 +101,7 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
       return () => {
         socket.emit("leave room", selectedGroup?._id);
         socket.off("message received");
+        socket.off("message deleted");
         socket.off("users in room");
         socket.off("user joined");
         socket.off("user left");
@@ -104,7 +110,7 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
         socket.off("user stop typing");
       };
     }
-  }, [selectedGroup, socket, toast]);
+  }, [selectedGroup?._id, socket]);
   // New block for Auto-Scrolling
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -150,7 +156,7 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
         groupId: selectedGroup?._id,
       });
 
-      setMessages([...messages, data]);
+      setMessages((prev) => [...prev, data]);
       setNewMessage("");
     } catch (error) {
       toast({
@@ -192,6 +198,30 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+  // delete message
+  const deleteMessage = async (messageId) => {
+    try {
+      const token = currentUser.token;
+      await axios.delete(`${apiURL}/api/messages/${messageId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
+      console.log("SENDING delete signal for:", messageId);
+      socket.emit("delete message", {
+        messageId,
+        groupId: selectedGroup._id,
+      });
+
+      toast({ title: "Message deleted", status: "success", duration: 2000 });
+    } catch (error) {
+      toast({
+        title: "Error deleting message",
+        status: "error",
+        duration: 3000,
+      });
+    }
   };
   //render typing indicator
   const renderTypingIndicator = () => {
@@ -426,6 +456,7 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
                         • {formatTime(message.createdAt)}
                       </Text>
                       <Box
+                        role="group"
                         bg={
                           message.sender._id === currentUser?._id
                             ? "blue.500"
@@ -444,7 +475,26 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup }) => {
                         }
                         borderColor="gray.100"
                       >
-                        <Text>{message.content}</Text>
+                        <HStack
+                          justify="space-between"
+                          spacing={4}
+                          align="flex-start"
+                        >
+                          <Text wordBreak="break-word">{message.content}</Text>
+
+                          {message.sender._id === currentUser?._id && (
+                            <Icon
+                              as={FiTrash2}
+                              cursor="pointer"
+                              fontSize="lg"
+                              opacity="0"
+                              _groupHover={{ opacity: "0.6" }}
+                              _hover={{ opacity: "1", color: "red.200" }}
+                              onClick={() => deleteMessage(message._id)}
+                              mt={1}
+                            />
+                          )}
+                        </HStack>
                       </Box>
                     </Flex>
                   </Box>
