@@ -107,26 +107,50 @@ export default function LandingPage() {
     <Box
       bg={useColorModeValue("gray.50", "gray.900")}
       minH="100vh"
-      position="relative" // Required to pin the Nav to the top right
+      position="relative"
     >
-      {/* --- NEW: TOP NAVIGATION BAR --- */}
+      {/* --- NAVIGATION BAR --- */}
       <Flex
         as="nav"
-        position="absolute"
+        position="fixed"
         top={0}
         right={0}
         left={0}
-        p={8}
-        justify="flex-end"
+        py={4}
+        px={12}
+        bg={useColorModeValue("white", "gray.800")}
+        borderBottom="1px solid"
+        borderColor={useColorModeValue("gray.100", "gray.700")}
+        boxShadow="sm"
+        justify="space-between"
         align="center"
-        zIndex={10}
+        zIndex={100}
         display={{ base: "none", md: "flex" }}
       >
+        {/* Brand/Logo Section */}
+        <HStack
+          spacing={3}
+          as={RouterLink}
+          to="/"
+          _hover={{ textDecoration: "none" }}
+        >
+          <Icon as={FiMessageSquare} w={8} h={8} color="blue.400" />
+          <Heading
+            size="md"
+            fontWeight="bold"
+            letterSpacing="tight"
+            color={useColorModeValue("gray.800", "white")}
+          >
+            Chatify.IO
+          </Heading>
+        </HStack>
+
+        {/* Navigation Items */}
         <HStack spacing={10}>
           <Text
             as="a"
             href="#features"
-            fontSize="2xl"
+            fontSize="xl"
             fontWeight={700}
             color={useColorModeValue("gray.700", "gray.100")}
             _hover={{ color: "blue.400", cursor: "pointer" }}
@@ -141,9 +165,8 @@ export default function LandingPage() {
               variant="ghost"
               colorScheme="blue"
               leftIcon={<FiLogIn />}
-              fontSize="xl"
+              fontSize="lg"
               fontWeight={600}
-              size="lg"
             >
               Sign In
             </Button>
@@ -154,10 +177,9 @@ export default function LandingPage() {
               bg="blue.400"
               rounded="full"
               _hover={{ bg: "blue.500" }}
-              size="lg"
-              fontSize="xl"
+              fontSize="lg"
               fontWeight={600}
-              px={10}
+              px={8}
               leftIcon={<FiUserPlus />}
             >
               Join Now
@@ -168,11 +190,11 @@ export default function LandingPage() {
       {/* ------------------------------- */}
 
       {/* Hero Section */}
-      <Container maxW="7xl" pt={10}>
+      <Container maxW="7xl" pt={20}>
         <Stack
           align="center"
           spacing={{ base: 8, md: 10 }}
-          py={{ base: 20, md: 28 }}
+          py={{ base: 10, md: 12 }}
           direction={{ base: "column", md: "row" }}
         >
           <Stack flex={1} spacing={{ base: 5, md: 10 }}>
@@ -251,7 +273,7 @@ export default function LandingPage() {
           >
             <Box
               position="relative"
-              height="500px"
+              height="420px"
               rounded="2xl"
               boxShadow="2xl"
               width="full"
@@ -290,9 +312,17 @@ export default function LandingPage() {
               <VStack
                 spacing={4}
                 p={4}
-                pt="60px"
-                h="calc(100% - 120px)"
+                pt="75px"
+                h="full"
                 overflowY="auto"
+                css={{
+                  "&::-webkit-scrollbar": { width: "4px" },
+                  "&::-webkit-scrollbar-track": { width: "6px" },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#E2E8F0",
+                    borderRadius: "24px",
+                  },
+                }}
               >
                 <ChatMessage
                   sender="Sarah Chen"
@@ -312,7 +342,31 @@ export default function LandingPage() {
                   time="10:32 AM"
                   isUser={true}
                 />
-                <Box w="100%" textAlign="center">
+                <ChatMessage
+                  sender="Sarah Chen"
+                  message="Should I also update the documentation?"
+                  time="10:34 AM"
+                  isUser={false}
+                />
+                <ChatMessage
+                  sender="Alex Thompson"
+                  message="Yes, that would be helpful for the handoff."
+                  time="10:35 AM"
+                  isUser={false}
+                />
+                <ChatMessage
+                  sender="You"
+                  message="I'll handle the deployment part."
+                  time="10:36 AM"
+                  isUser={true}
+                />
+                <ChatMessage
+                  sender="Sarah Chen"
+                  message="Awesome, keeping the momentum going!"
+                  time="10:38 AM"
+                  isUser={false}
+                />
+                <Box w="100%" textAlign="right">
                   <Badge colorScheme="gray" fontSize="xs">
                     Sarah is typing...
                   </Badge>
@@ -323,15 +377,15 @@ export default function LandingPage() {
         </Stack>
 
         {/* Features Grid */}
-        <Box pt={0} pb={20} position="relative">
+        <Box pt={20} pb={20} position="relative">
           <Box
             id="features"
             position="absolute"
-            top="-40px"
+            top="-100px"
             visibility="hidden"
           />
 
-          <VStack spacing={2} textAlign="center" mb={12}>
+          <VStack spacing={2} textAlign="center" mb={2}>
             <Heading fontSize="4xl">Powerful Features</Heading>
             <Text fontSize="lg" color="gray.500">
               Everything you need for seamless team collaboration
