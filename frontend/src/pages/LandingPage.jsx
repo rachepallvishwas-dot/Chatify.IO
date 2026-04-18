@@ -24,6 +24,8 @@ import {
   FiGlobe,
   FiActivity,
   FiUserCheck,
+  FiGithub,
+  FiLinkedin,
 } from "react-icons/fi";
 
 const Feature = ({ title, text, icon, badges = [] }) => {
@@ -473,6 +475,56 @@ export default function LandingPage() {
             Create Free Account
           </Button>
         </Stack>
+      </Box>
+      {/* --- FOOTER--- */}
+      <Box
+        as="footer"
+        bg="gray.900"
+        color="gray.400"
+        py={6}
+        borderTop="1px solid"
+        borderColor="gray.800"
+      >
+        <Container maxW="7xl">
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            justify="space-between"
+            align="center"
+            spacing={4}
+          >
+            {/* Logo and Copyright */}
+            <HStack spacing={4}>
+              <HStack spacing={2}>
+                <Icon as={FiMessageSquare} w={5} h={5} color="blue.400" />
+                <Text fontWeight="bold" color="white">
+                  Chatify.IO
+                </Text>
+              </HStack>
+              <Text fontSize="sm">© 2026 Chatify. All rights reserved.</Text>
+            </HStack>
+
+            <HStack spacing={6}>
+              <Box
+                as="a"
+                href="https://github.com/rachepallvishwas-dot"
+                target="_blank"
+                _hover={{ color: "white" }}
+                transition="all 0.2s"
+              >
+                <Icon as={FiGithub} w={5} h={5} />
+              </Box>
+              <Box
+                as="a"
+                href="https://www.linkedin.com/in/rachepallvishwas-dot/"
+                target="_blank"
+                _hover={{ color: "white" }}
+                transition="all 0.2s"
+              >
+                <Icon as={FiLinkedin} w={5} h={5} />
+              </Box>
+            </HStack>
+          </Stack>
+        </Container>
       </Box>
     </Box>
   );
