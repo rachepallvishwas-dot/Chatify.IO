@@ -1,0 +1,10 @@
+[33m855f7c6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: removed duplicate imports in Sidebar
+[33m0f03391[m fix: added missing Link import
+[33m18831b8[m added global theme toggle to sidebar
+[33me748f97[m fixed mobile navbar visibility
+[33m89ae31e[m mobile fix
+[33m885d02f[m fix: updated isMember logic and useEffect for group updates
+[33md84a27b[m added conditional chat input
+[33m8fb675d[m fixed GroupModel capitalization
+[33m30cb4ea[m added group membership check
+[33m2a8db09[m added backend production url to utils

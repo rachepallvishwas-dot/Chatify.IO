@@ -8,13 +8,10 @@ import {
   Tooltip,
   Avatar,
   useColorModeValue,
-  useColorMode,
-  IconButton,
 } from "@chakra-ui/react";
-import { FiUsers, FiCircle, FiMoon, FiSun } from "react-icons/fi";
+import { FiUsers, FiCircle } from "react-icons/fi";
 
 const UsersList = ({ users }) => {
-  const { colorMode, toggleColorMode } = useColorMode();
   const headerBg = useColorModeValue("white", "gray.900");
   const headerBorder = useColorModeValue("gray.200", "gray.700");
   const cardBg = useColorModeValue("white", "gray.800");
@@ -59,21 +56,6 @@ const UsersList = ({ users }) => {
             </Badge>
           </Text>
         </Flex>
-
-        <IconButton
-          aria-label="Toggle Mode"
-          icon={colorMode === "light" ? <FiMoon /> : <FiSun />}
-          onClick={toggleColorMode}
-          variant="ghost"
-          size="md"
-          fontSize="22px"
-          borderRadius="lg"
-          _hover={{
-            bg: useColorModeValue("gray.100", "whiteAlpha.200"),
-            transform: "scale(1.1)",
-          }}
-          transition="all 0.2s"
-        />
       </Flex>
 
       {/* Users List */}

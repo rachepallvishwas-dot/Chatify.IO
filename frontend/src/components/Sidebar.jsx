@@ -19,9 +19,12 @@ import {
   Badge,
   Tooltip,
   useColorModeValue,
+  useColorMode,
+  IconButton,
+  HStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { FiLogOut, FiPlus, FiUsers } from "react-icons/fi";
+import { FiLogOut, FiPlus, FiUsers, FiSun, FiMoon } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import apiURL from "../../utils";
@@ -33,6 +36,7 @@ const Sidebar = ({
   userGroups,
   fetchGroups,
 }) => {
+  const { colorMode, toggleColorMode } = useColorMode();
   const sidebarBg = useColorModeValue("white", "gray.900");
   const sidebarBorder = useColorModeValue("gray.200", "gray.700");
   const headerTextColor = useColorModeValue("gray.800", "white");
@@ -161,8 +165,8 @@ const Sidebar = ({
     <Box
       h={{ base: "calc(100vh - 60px)", md: "100%" }}
       borderRight="1px"
-      bg={sidebarBg} // Changed this
-      borderColor={sidebarBorder} // Changed this
+      bg={sidebarBg}
+      borderColor={sidebarBorder}
       width={{ base: "100%", md: "300px" }}
       display="flex"
       flexDirection="column"
@@ -187,19 +191,33 @@ const Sidebar = ({
             Groups
           </Text>
         </Flex>
-        {isAdmin && (
-          <Tooltip label="Create New Group" placement="right">
-            <Button
-              size="sm"
-              colorScheme="blue"
-              variant="ghost"
-              onClick={onOpen}
-              borderRadius="full"
-            >
-              <Icon as={FiPlus} fontSize="20px" color={plusIconColor} />
-            </Button>
-          </Tooltip>
-        )}
+
+        <HStack spacing={1}>
+          <IconButton
+            size="lg"
+            fontSize="22px"
+            variant="ghost"
+            aria-label="Toggle Theme"
+            icon={colorMode === "light" ? <FiMoon /> : <FiSun />}
+            onClick={toggleColorMode}
+            borderRadius="full"
+            borderRadius="lg"
+          />
+
+          {isAdmin && (
+            <Tooltip label="Create New Group" placement="bottom">
+              <Button
+                size="sm"
+                colorScheme="blue"
+                variant="ghost"
+                onClick={onOpen}
+                borderRadius="full"
+              >
+                <Icon as={FiPlus} fontSize="20px" color={plusIconColor} />
+              </Button>
+            </Tooltip>
+          )}
+        </HStack>
       </Flex>
 
       <Box flex="1" overflowY="auto" p={4} mb="80px">
