@@ -15,9 +15,16 @@ import {
   IconButton,
   Badge,
   Input,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
-import { FiSun, FiMoon } from "react-icons/fi";
+import { FiSun, FiMoon, FiMenu } from "react-icons/fi";
 import {
   FiMessageSquare,
   FiUsers,
@@ -109,6 +116,7 @@ const ChatMessage = ({ message, sender, time, isUser }) => {
 
 export default function LandingPage() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box
       bg={useColorModeValue("gray.50", "gray.900")}
@@ -123,7 +131,7 @@ export default function LandingPage() {
         right={0}
         left={0}
         py={4}
-        px={12}
+        px={{ base: 4, md: 12 }}
         bg={useColorModeValue("white", "gray.800")}
         borderBottom="1px solid"
         borderColor={useColorModeValue("gray.100", "gray.700")}
@@ -131,9 +139,7 @@ export default function LandingPage() {
         justify="space-between"
         align="center"
         zIndex={100}
-        display={{ base: "none", md: "flex" }}
       >
-        {/* Brand/Logo Section */}
         <HStack
           spacing={3}
           as={RouterLink}
@@ -151,17 +157,18 @@ export default function LandingPage() {
           </Heading>
         </HStack>
 
-        {/* Navigation Items */}
-        <HStack spacing={4}>
-          <Button as="a" href="#features" variant="ghost">
-            Features
-          </Button>
-          <Button as={RouterLink} to="/login" variant="ghost">
-            Sign In
-          </Button>
-          <Button as={RouterLink} to="/register" colorScheme="blue">
-            Join Now
-          </Button>
+        <HStack spacing={2}>
+          <HStack spacing={4} display={{ base: "none", md: "flex" }} mr={4}>
+            <Button as="a" href="#features" variant="ghost">
+              Features
+            </Button>
+            <Button as={RouterLink} to="/login" variant="ghost">
+              Sign In
+            </Button>
+            <Button as={RouterLink} to="/register" colorScheme="blue">
+              Join Now
+            </Button>
+          </HStack>
 
           <IconButton
             icon={colorMode === "light" ? <FiMoon /> : <FiSun />}
@@ -169,10 +176,59 @@ export default function LandingPage() {
             variant="ghost"
             aria-label="Toggle Dark Mode"
             fontSize="xl"
-            ml={2}
+          />
+
+          {/* Hamburger Menu for Mobile users */}
+          <IconButton
+            display={{ base: "flex", md: "none" }}
+            onClick={onOpen}
+            icon={<FiMenu />}
+            variant="ghost"
+            aria-label="Open Menu"
+            fontSize="2xl"
           />
         </HStack>
       </Flex>
+
+      {/* ---SLIDE-OUT MENU--- */}
+      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent bg={useColorModeValue("white", "gray.800")}>
+          <DrawerCloseButton mt={2} />
+          <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
+          <DrawerBody>
+            <VStack spacing={4} mt={8}>
+              <Button
+                as="a"
+                href="#features"
+                variant="ghost"
+                w="full"
+                onClick={onClose}
+              >
+                Features
+              </Button>
+              <Button
+                as={RouterLink}
+                to="/login"
+                variant="ghost"
+                w="full"
+                onClick={onClose}
+              >
+                Sign In
+              </Button>
+              <Button
+                as={RouterLink}
+                to="/register"
+                colorScheme="blue"
+                w="full"
+                onClick={onClose}
+              >
+                Join Now
+              </Button>
+            </VStack>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
       {/* ------------------------------- */}
 
       {/* Hero Section */}
