@@ -1,6 +1,7 @@
 const express = require("express");
 const Message = require("../models/ChatModel");
 const { protect } = require("../middleware/authMiddleware");
+const Group = require("../models/groupModel"); // change
 
 const messageRouter = express.Router();
 
@@ -8,6 +9,13 @@ const messageRouter = express.Router();
 messageRouter.post("/", protect, async (req, res) => {
   try {
     const { content, groupId } = req.body;
+
+    // change
+    const group = await Group.findById(groupId);
+    if (!group || !group.members.includes(req.user._id)) {
+      return res.status(403).json({ message: "Join the group first!" });
+    }
+
     const message = await Message.create({
       sender: req.user._id,
       content,
@@ -34,6 +42,7 @@ messageRouter.get("/:groupId", protect, async (req, res) => {
     res.status(400).json({ message: error.Message });
   }
 });
+
 // delete a message
 messageRouter.delete("/:messageId", protect, async (req, res) => {
   try {
@@ -56,4 +65,5 @@ messageRouter.delete("/:messageId", protect, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
 module.exports = messageRouter;
