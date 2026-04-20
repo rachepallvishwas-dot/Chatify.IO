@@ -51,6 +51,7 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup, fetchGroups }) => {
   } = useDisclosure();
 
   const currentUser = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  const isMember = selectedGroup?.members?.includes(currentUser?._id);
 
   useEffect(() => {
     if (selectedGroup && socket) {
@@ -492,52 +493,68 @@ const ChatArea = ({ selectedGroup, socket, setSelectedGroup, fetchGroups }) => {
               <div ref={messagesEndRef} />
             </VStack>
 
-            <Box
-              px={6}
-              py={0}
-              h="80px"
-              display="flex"
-              alignItems="center"
-              borderTop="1px solid"
-              bg={useColorModeValue("white", "gray.900")}
-              borderColor={useColorModeValue("gray.200", "gray.700")}
-              position="relative"
-              zIndex="1"
-            >
-              <InputGroup size="lg">
-                <Input
-                  ref={inputRef}
-                  value={newMessage}
-                  onChange={handleTyping}
-                  placeholder="Type your message..."
-                  pr="4.5rem"
-                  bg={useColorModeValue("gray.50", "gray.800")}
-                  color={useColorModeValue("gray.800", "white")}
-                  _placeholder={{
-                    color: useColorModeValue("gray.400", "gray.500"),
-                  }}
-                  border="none"
-                  _focus={{
-                    boxShadow: "none",
-                    bg: useColorModeValue("gray.100", "gray.700"),
-                  }}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") sendMessage();
-                  }}
-                />
-                <InputRightElement width="4.5rem">
-                  <Button
-                    h="1.75rem"
-                    size="sm"
-                    colorScheme="blue"
-                    borderRadius="full"
-                    onClick={sendMessage}
-                  >
-                    <Icon as={FiSend} />
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-            </Box>
+            {isMember ? (
+              <Box
+                px={6}
+                py={0}
+                h="80px"
+                display="flex"
+                alignItems="center"
+                borderTop="1px solid"
+                bg={useColorModeValue("white", "gray.900")}
+                borderColor={useColorModeValue("gray.200", "gray.700")}
+                position="relative"
+                zIndex="1"
+              >
+                <InputGroup size="lg">
+                  <Input
+                    ref={inputRef}
+                    value={newMessage}
+                    onChange={handleTyping}
+                    placeholder="Type your message..."
+                    pr="4.5rem"
+                    bg={useColorModeValue("gray.50", "gray.800")}
+                    color={useColorModeValue("gray.800", "white")}
+                    _placeholder={{
+                      color: useColorModeValue("gray.400", "gray.500"),
+                    }}
+                    border="none"
+                    _focus={{
+                      boxShadow: "none",
+                      bg: useColorModeValue("gray.100", "gray.700"),
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") sendMessage();
+                    }}
+                  />
+                  <InputRightElement width="4.5rem">
+                    <Button
+                      h="1.75rem"
+                      size="sm"
+                      colorScheme="blue"
+                      borderRadius="full"
+                      onClick={sendMessage}
+                    >
+                      <Icon as={FiSend} />
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </Box>
+            ) : (
+              <Box
+                px={6}
+                py={4}
+                bg={useColorModeValue("gray.50", "gray.800")}
+                borderTop="1px solid"
+                borderColor={borderColor}
+                textAlign="center"
+              >
+                <Text color={mutedTextColor} fontWeight="medium">
+                  🔒 You must join this group to participate in the
+                  conversation.
+                </Text>
+              </Box>
+            )}
           </>
         ) : (
           <Flex
